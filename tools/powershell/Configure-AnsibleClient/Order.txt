@@ -1,0 +1,7 @@
+Install-Chocolatey
+Install-OpenSSHServer
+Copy-Sshd_config
+Build-ClatAnsibleCreds
+Create-ClatAnsibleUser
+Create-UserProfile
+Create-AuthorizedKeys
