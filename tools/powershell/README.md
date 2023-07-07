@@ -53,7 +53,6 @@ while ($destinationFolder.Items().Count -lt $zip.Items().Count) {
     Start-Sleep -Milliseconds 500
 }
 ```
-### Edit Install-OpenSSH.ps1 
 
 ### Run the script
 
