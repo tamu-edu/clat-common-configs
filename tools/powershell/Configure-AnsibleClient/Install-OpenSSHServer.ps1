@@ -113,10 +113,10 @@ param ()
             if ((Get-WindowsCapability -Online | where Name -like '*ssh*server*')){
                 $TaskName = "Removing previous version of OpenSSH using Windows Capability"
                 Write-Verbose $TaskName
-                Stop-Service sshd
+                $null = Stop-Service sshd -ErrorAction SilentlyContinue
                 $null = Remove-WindowsCapability -Name 'OpenSSH.Client~~~~0.0.1.0' -Online -ErrorAction Stop
                 $null = Remove-WindowsCapability -Name 'OpenSSH.Server~~~~0.0.1.0' -Online -ErrorAction Stop
-                rmdir C:\ProgramData\ssh -Recurse -Force
+                $null = rmdir C:\ProgramData\ssh -Recurse -Force -ErrorAction SilentlyContinue
             } elseif (choco list -lo | Select-String openssh){
                 $TaskName = "Removing previous version of OpenSSH with Chocolatey"
                 Write-Verbose $TaskName
