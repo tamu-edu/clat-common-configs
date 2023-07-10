@@ -44,11 +44,8 @@ $zip = $shellApp.NameSpace($zipFile)
 $destinationFolder = $shellApp.NameSpace($destination)
 
 $destinationFolder.CopyHere($zip.Items())
-```
 
-### Wait for the extraction to complete
-
-```powershell
+# Wait for the extraction to complete
 while ($destinationFolder.Items().Count -lt $zip.Items().Count) {
     Start-Sleep -Milliseconds 500
 }
