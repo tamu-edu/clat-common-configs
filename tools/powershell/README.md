@@ -54,7 +54,7 @@ while ($destinationFolder.Items().Count -lt $zip.Items().Count) {
 ### Run the script
 
 ```powershell
-cd C:\temp\clat-common-configs-add-changes-from-clat-windows-admin\tools\powershell\
+cd C:\temp\clat-common-configs-main\tools\powershell
 
 . .\Configure-AnsibleClient.ps1 -Verbose
 ```
