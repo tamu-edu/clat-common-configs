@@ -18,18 +18,20 @@ param ()
 
     # Install OpenSSH using Chocolatey if the OpenSSH.Server capability is not available
     if (([System.Environment]::OSVersion.Version).Major -le 6){
-        $InstallWindowsCapability = $true
-    } else {
         $InstallWindowsCapability = $false
+    } else {
+        $InstallWindowsCapability = $true
     }
 
     if ((-NOT $InstallWindowsCapability) -or $Global:ForceChocoSshInstall){
+        $TaskName = "Installing/reinstalling OpenSSH in Windows 2012 or older"
+        Write-Verbose $TaskName
         try {
             if (choco list -lo | Select-String openssh){
                 $TaskName = "Removing previous version of OpenSSH"
                 Write-Verbose $TaskName
                 try {
-                    $ChocoOutput = choco uninstall openssh --y -force
+                    $ChocoOutput = choco uninstall openssh --y -force -params '"/SSHServerFeature /DeleteConfigAndServerKeys"'
                     if ($LASTEXITCODE -ne 0){
                         throw $ChocoOutput
                     }
@@ -47,7 +49,7 @@ param ()
             $TaskName = ""
             Write-Verbose $TaskName
             try {
-                $ChocoOutput = choco install OpenSSH --y -force
+                $ChocoOutput = choco install OpenSSH --y -force -params '"/SSHServerFeature /DeleteConfigAndServerKeys"'
                 if ($LASTEXITCODE -ne 0){
                     throw $ChocoOutput
                 }
@@ -67,7 +69,10 @@ param ()
             $TaskName = "Generating host SSH keys"
             Write-Verbose $TaskName
             try {
-                $null = . "C:\Program Files\OpenSSH-Win64\ssh-keygen.exe" -A -ErrorAction Stop
+                $KeygenOutput = . "C:\Program Files\OpenSSH-Win64\ssh-keygen.exe" -A
+                if ($LASTEXITCODE){
+                    throw $KeygenOutput
+                }
             } catch {
                 throw "$($TaskName): $_"
             }
@@ -110,6 +115,8 @@ param ()
         try {
             # Using Chocolatey to install the SSHServerFeature for consistency
             # instead of Add-WindowsCapability
+            $TaskName = "Installing/reinstalling OpenSSH in Windows 2016 or greater"
+            Write-Verbose $TaskName
             if ((Get-WindowsCapability -Online | where Name -like '*ssh*server*')){
                 $TaskName = "Removing previous version of OpenSSH using Windows Capability"
                 Write-Verbose $TaskName
