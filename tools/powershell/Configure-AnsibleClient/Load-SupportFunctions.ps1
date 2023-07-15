@@ -10,8 +10,7 @@ function Call-Script {
     try {
         Invoke-Command -ScriptBlock $ScriptBlock
     } catch {
-        $ErrorMessage = $ErrorTemplate -f $_
-        throw $ErrorMessage
+        throw
     }
 
     Write-Verbose "$($Objective): completed successfully`n-------------------------------------------------------------------------------"
