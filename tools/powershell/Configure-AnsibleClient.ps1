@@ -11,9 +11,9 @@ begin {
 
     # The script is intended for PowerShell 5.1 or higher.  
     $Global:PsVersion = $PSVersionTable.PSVersion | Select-Object Major, Minor
-    If (($PsVersion.Major -lt 5) -or ($PsVersion.Major -eq 5 -and $PsVersion.Minor -ne 1)){
-        throw "PowerShell version $($PsVersion.Major).$($PsVersion.Minor): This script must run on either Windows PowerShell 5.1 or PowerShell Core"
-    }
+#    If (($PsVersion.Major -lt 5) -or ($PsVersion.Major -eq 5 -and $PsVersion.Minor -ne 1)){
+#        throw "PowerShell version $($PsVersion.Major).$($PsVersion.Minor): This script must run on either Windows PowerShell 5.1 or PowerShell Core"
+#    }
 
     if (-NOT (New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){
         throw 'This operation requires elevation. Start PowerShell with "run as Administrator"'

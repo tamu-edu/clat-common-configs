@@ -24,7 +24,7 @@ function Get-ScriptOrder {
     
     [scriptblock]$ScriptBlock = {
         try {
-            $Global:ScriptOrder = Get-Content $Global:ProjectPath\Order.txt
+            $Global:ScriptOrder = Get-Content $Global:ProjectPath\Order.txt | Where-Object {$_}
         } catch {
             throw
         }

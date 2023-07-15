@@ -17,7 +17,7 @@ param ()
     }
 
     # Install OpenSSH using Chocolatey if the OpenSSH.Server capability is not available
-    if (Get-Command Get-WindowsCapability){
+    if (([System.Environment]::OSVersion.Version).Major -le 6){
         $InstallWindowsCapability = $true
     } else {
         $InstallWindowsCapability = $false
@@ -116,7 +116,7 @@ param ()
                 $null = Stop-Service sshd -ErrorAction SilentlyContinue
                 $null = Remove-WindowsCapability -Name 'OpenSSH.Client~~~~0.0.1.0' -Online -ErrorAction Stop
                 $null = Remove-WindowsCapability -Name 'OpenSSH.Server~~~~0.0.1.0' -Online -ErrorAction Stop
-                $null = rmdir C:\ProgramData\ssh -Recurse -Force -ErrorAction SilentlyContinue
+                $null = Remove-Item C:\ProgramData\ssh -Recurse -Force -ErrorAction SilentlyContinue
             } elseif (choco list -lo | Select-String openssh){
                 $TaskName = "Removing previous version of OpenSSH with Chocolatey"
                 Write-Verbose $TaskName
