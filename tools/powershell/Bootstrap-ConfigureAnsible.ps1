@@ -10,11 +10,11 @@ Set-ItemProperty -Path $AdminKey -Name "IsInstalled" -Value 0
 Set-ItemProperty -Path $UserKey -Name "IsInstalled" -Value 0
 Stop-Process -Name Explorer -Force
 
-# Is chocolatey installed 
+# Is chocolatey installed
 $ChocoLoca = where.exe choco.exe 2>&1
 if ($LASTEXITCODE){
     # Chocolatey is not installed
-    Set-ExecutionPolicy Bypass -Scope Process -Force; 
+    Set-ExecutionPolicy Bypass -Scope Process -Force;
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
 
     try {
@@ -22,7 +22,7 @@ if ($LASTEXITCODE){
     } catch {
         Write-Verbose "Do nothing.  IEX is behaving wierd when not in a try/catch"
     }
-    
+
     $ChocoLoca = where.exe choco.exe 2>&1
     if ($LASTEXITCODE){
         Read-Host "Restart this script after this server reboots (press enter to Reboot)"
@@ -32,12 +32,12 @@ if ($LASTEXITCODE){
 
 # Install PowerShell 5.1
 if (-NOT (choco list PowerShell | where {$_ -match 'PowerShell 5\.1.*'})){
-    $null = choco install PowerShell --y 
+    $null = choco install PowerShell --y
     Read-Host "Restart this script after this server reboots (press enter to Reboot)"
     shutdown /r /t 0
 }
 
-mkdir c:\temp -ErrorAction SilentlyContinue ;Invoke-WebRequest -Uri "https://github.com/tamu-edu/clat-common-configs/archive/refs/heads/bootstrap-changes.zip" -OutFile c:\temp\common-configs.zip
+mkdir c:\temp -ErrorAction SilentlyContinue ;Invoke-WebRequest -Uri "https://github.com/tamu-edu/clat-common-configs/archive/refs/heads/main.zip" -OutFile c:\temp\common-configs.zip
 
 $zipFile = "c:\temp\common-configs.zip"
 
