@@ -39,6 +39,8 @@ param ()
                     if ($LASTEXITCODE -ne 0){
                         throw $RefreshEnvOutput
                     }
+
+                    Set-SshHostKeyFilePerms -RemovePermissions
                 } catch {
                     throw "$($TaskName): $_"
                 }
@@ -77,19 +79,9 @@ param ()
                 throw "$($TaskName): $_"
             }
 
-            $TaskName = "Setting permissions on host SSH key files"
-            Write-Verbose $TaskName
-            try {
-                $null = Get-ChildItem -Path 'C:\ProgramData\ssh\ssh_host_*_key' -ErrorAction Stop | ForEach-Object {    
-                    $acl = get-acl $_.FullName
-                    $ar = New-Object  System.Security.AccessControl.FileSystemAccessRule("NT Service\sshd", "Read", "Allow")
-                    $acl.SetAccessRule($ar)
-                    $null = Set-Acl $_.FullName $acl -ErrorAction Stop
-                }
-            } catch {
-                throw "$($TaskName): $_"
-            }
-        
+            # Fix permissions on C:\ProgramData\ssh\ssh_host* for sshd
+            Set-SshHostKeyFilePerms
+                  
             $TaskName = "Opening ports for SSH in the firewall"
             Write-Verbose $TaskName
             try {
