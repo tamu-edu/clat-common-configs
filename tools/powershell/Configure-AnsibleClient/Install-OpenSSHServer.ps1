@@ -2,7 +2,7 @@
 param ()
 
 [scriptblock]$ScriptBlock = {
-    # Need to ensure that we can find the PowerShell 
+    # Need to ensure that we can find the PowerShell
     # Exe to set the shell for SSH before doing an
     # uninstall/install
     if ($Global:PsVersion.Major -eq 5) {
@@ -45,7 +45,7 @@ param ()
                     throw "$($TaskName): $_"
                 }
             }
-            
+
             $TaskName = "Installing OpenSSH with Chocolatey"
             Write-Verbose $TaskName
             $TaskName = ""
@@ -66,40 +66,6 @@ param ()
             } catch {
                 throw "$($TaskName): $_"
             }
-
-
-            $TaskName = "Generating host SSH keys"
-            Write-Verbose $TaskName
-            try {
-                $KeygenOutput = . "C:\Program Files\OpenSSH-Win64\ssh-keygen.exe" -A
-                if ($LASTEXITCODE){
-                    throw $KeygenOutput
-                }
-            } catch {
-                throw "$($TaskName): $_"
-            }
-
-            # Fix permissions on C:\ProgramData\ssh\ssh_host* for sshd
-            Set-SshHostKeyFilePerms
-                  
-            $TaskName = "Opening ports for SSH in the firewall"
-            Write-Verbose $TaskName
-            try {
-                $null = New-NetFirewallRule -Protocol TCP -LocalPort 22 -Direction Inbound -Action Allow -DisplayName SSH -ErrorAction Stop
-            } catch {
-                throw "$($TaskName): $_"
-            }
-
-            
-            $TaskName = "Setting sshd and ssh-agent to start automatically"
-            Write-Verbose $TaskName
-            try {
-                $null = Set-Service SSHD -StartupType Automatic -ErrorAction Stop
-                $null = Set-Service SSH-Agent -StartupType Automatic -ErrorAction Stop
-            } catch {
-                throw "$($TaskName): $_"
-            }
-
         } catch {
             throw "installing OpenSSH using Chocolatey: $_"
         }
@@ -131,7 +97,7 @@ param ()
                 } catch {
                     throw "$($TaskName): $_"
                 }
-            } 
+            }
 
             $TaskName = "Installing OpenSSH with Chocolatey"
             Write-Verbose $TaskName
@@ -144,28 +110,57 @@ param ()
                 throw "$($TaskName): $_"
             }
 
-            # Set the shell registry key for OpenSSH to point to PowerShell (
-            # default is CMD)
-            try {
-                $RegistryPath = "HKLM:\SOFTWARE\OpenSSH"
-                $RegistryKey = 'DefaultShell'
-                $Value = $PsPath
-                if (-NOT (Get-ItemProperty -Path $RegistryPath -Name $RegistryKey -ErrorAction SilentlyContinue)){
-                    $null = New-ItemProperty -Path $RegistryPath -Name $RegistryKey -Value $Value -ErrorAction Stop
-                } else {
-                    $null = Set-ItemProperty -Path $RegistryPath -Name $RegistryKey -Value $Value -ErrorAction Stop
-                }
-            }
-            catch {
-                throw "Trying to set the shell registry value to: $PsExe"
-            }
-
         } catch {
             throw "$($TaskName): $_"
         }
-
     }
 
+    $TaskName = "Generating host SSH keys"
+    Write-Verbose $TaskName
+    try {
+        $KeygenOutput = . "C:\Program Files\OpenSSH-Win64\ssh-keygen.exe" -A
+        if ($LASTEXITCODE){
+            throw $KeygenOutput
+        }
+    } catch {
+        throw "$($TaskName): $_"
+    }
+
+    # Fix permissions on C:\ProgramData\ssh\ssh_host* for sshd
+    Set-SshHostKeyFilePerms
+
+    $TaskName = "Opening ports for SSH in the firewall"
+    Write-Verbose $TaskName
+    try {
+        $null = New-NetFirewallRule -Protocol TCP -LocalPort 22 -Direction Inbound -Action Allow -DisplayName SSH -ErrorAction Stop
+    } catch {
+        throw "$($TaskName): $_"
+    }
+
+    $TaskName = "Setting sshd and ssh-agent to start automatically"
+    Write-Verbose $TaskName
+    try {
+        $null = Set-Service SSHD -StartupType Automatic -ErrorAction Stop
+        $null = Set-Service SSH-Agent -StartupType Automatic -ErrorAction Stop
+    } catch {
+        throw "$($TaskName): $_"
+    }
+
+    # Set the shell registry key for OpenSSH to point to PowerShell (
+    # default is CMD)
+    try {
+        $RegistryPath = "HKLM:\SOFTWARE\OpenSSH"
+        $RegistryKey = 'DefaultShell'
+        $Value = $PsPath
+        if (-NOT (Get-ItemProperty -Path $RegistryPath -Name $RegistryKey -ErrorAction SilentlyContinue)){
+            $null = New-ItemProperty -Path $RegistryPath -Name $RegistryKey -Value $Value -ErrorAction Stop
+        } else {
+            $null = Set-ItemProperty -Path $RegistryPath -Name $RegistryKey -Value $Value -ErrorAction Stop
+        }
+    }
+    catch {
+        throw "Trying to set the shell registry value to: $PsExe"
+    }
 }
 
 Call-Script -Objective 'Install OpenSSH Server' -Script $ScriptBlock
