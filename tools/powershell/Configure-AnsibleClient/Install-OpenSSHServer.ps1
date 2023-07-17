@@ -17,7 +17,7 @@ param ()
     }
 
     # Install OpenSSH using Chocolatey if the OpenSSH.Server capability is not available
-    if (([System.Environment]::OSVersion.Version).Major -le 6){
+    if (-NOT ($Global:WindowsVersion -eq "Windows Server 2012") ){
         $InstallWindowsCapability = $false
     } else {
         $InstallWindowsCapability = $true
