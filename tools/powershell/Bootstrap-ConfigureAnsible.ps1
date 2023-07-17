@@ -42,8 +42,8 @@ if ($LASTEXITCODE){
 }
 
 # Install PowerShell 5.1
-if (-NOT (choco list PowerShell | where {$_ -match 'PowerShell 5\.1.*'})){
-    $null = choco install PowerShell --y
+if ((-NOT (choco list PowerShell | where {$_ -match 'PowerShell 5\.1.*'})) -and $WindowsVersion -eq 'Windows Server 2012'){
+    choco install PowerShell --y
     Read-Host "Restart this script after this server reboots (press enter to Reboot)"
     shutdown /r /t 0
 }
