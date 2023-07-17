@@ -65,6 +65,6 @@ while ($destinationFolder.Items().Count -lt $zip.Items().Count) {
     Start-Sleep -Milliseconds 500
 }
 
-cd C:\temp\clat-common-configs\tools\powershell
+cd C:\temp\clat-common-configs-main\tools\powershell
 
 . .\Configure-AnsibleClient.ps1 -Verbose
