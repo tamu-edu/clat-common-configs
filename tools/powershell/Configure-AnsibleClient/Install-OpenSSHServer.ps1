@@ -137,11 +137,10 @@ param ()
         throw "$($TaskName): $_"
     }
 
-    $TaskName = "Setting sshd and ssh-agent to start automatically"
+    $TaskName = "Setting sshd to start automatically"
     Write-Verbose $TaskName
     try {
         $null = Set-Service SSHD -StartupType Automatic -ErrorAction Stop
-        $null = Set-Service SSH-Agent -StartupType Automatic -ErrorAction Stop
     } catch {
         throw "$($TaskName): $_"
     }
