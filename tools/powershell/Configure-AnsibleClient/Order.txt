@@ -1,4 +1,3 @@
-Install-Chocolatey
 Install-OpenSSHServer
 Copy-Sshd_config
 Build-ClatAnsibleCreds
