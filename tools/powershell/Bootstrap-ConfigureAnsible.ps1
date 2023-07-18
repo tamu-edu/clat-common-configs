@@ -1,4 +1,4 @@
-﻿$os = Get-WmiObject -Class Win32_OperatingSystem
+$os = Get-WmiObject -Class Win32_OperatingSystem
 
 $Global:WindowsVersion = ''
 switch -wildcard ($os.Caption) {
@@ -42,13 +42,13 @@ if ($LASTEXITCODE){
 }
 
 # Install PowerShell 5.1
-if ((-NOT (choco list PowerShell | where {$_ -match 'PowerShell 5\.1.*'})) -and $WindowsVersion -eq 'Windows Server 2012'){
-    choco install PowerShell --y
+if (-NOT (choco list PowerShell | where {$_ -match 'PowerShell 5\.1.*'})){
+    $null = choco install PowerShell --y
     Read-Host "Restart this script after this server reboots (press enter to Reboot)"
     shutdown /r /t 0
 }
 
-mkdir c:\temp -ErrorAction SilentlyContinue ;Invoke-WebRequest -Uri "https://github.com/tamu-edu/clat-common-configs/archive/refs/heads/main.zip" -OutFile c:\temp\common-configs.zip
+mkdir c:\temp -ErrorAction SilentlyContinue ;Invoke-WebRequest -Uri "https://github.com/tamu-edu/clat-common-configs/archive/refs/heads/windows-2016-fixes.zip" -OutFile c:\temp\common-configs.zip
 
 $zipFile = "c:\temp\common-configs.zip"
 
@@ -65,6 +65,6 @@ while ($destinationFolder.Items().Count -lt $zip.Items().Count) {
     Start-Sleep -Milliseconds 500
 }
 
-cd C:\temp\clat-common-configs-main\tools\powershell
+cd C:\temp\clat-common-configs-windows-2016-fixes\tools\powershell
 
 . .\Configure-AnsibleClient.ps1 -Verbose
