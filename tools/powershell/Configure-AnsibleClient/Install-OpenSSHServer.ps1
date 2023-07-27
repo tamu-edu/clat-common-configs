@@ -17,10 +17,10 @@ param ()
     }
 
     # Install OpenSSH using Chocolatey if the OpenSSH.Server capability is not available
-    if (([System.Environment]::OSVersion.Version).Major -le 6){
-        $InstallWindowsCapability = $false
-    } else {
+    if (-NOT ($Global:WindowsVersion -eq "Windows Server 2012") ){
         $InstallWindowsCapability = $true
+    } else {
+        $InstallWindowsCapability = $false
     }
 
     if ((-NOT $InstallWindowsCapability) -or $Global:ForceChocoSshInstall){
@@ -137,11 +137,10 @@ param ()
         throw "$($TaskName): $_"
     }
 
-    $TaskName = "Setting sshd and ssh-agent to start automatically"
+    $TaskName = "Setting sshd to start automatically"
     Write-Verbose $TaskName
     try {
         $null = Set-Service SSHD -StartupType Automatic -ErrorAction Stop
-        $null = Set-Service SSH-Agent -StartupType Automatic -ErrorAction Stop
     } catch {
         throw "$($TaskName): $_"
     }

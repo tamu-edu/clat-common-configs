@@ -1,4 +1,15 @@
-﻿if (([System.Environment]::OSVersion.Version).Major -le 6){
+$os = Get-WmiObject -Class Win32_OperatingSystem
+
+$Global:WindowsVersion = ''
+switch -wildcard ($os.Caption) {
+    "*Windows Server 2012*" { $WindowsVersion = "Windows Server 2012" }
+    "*Windows Server 2016*" { $WindowsVersion = "Windows Server 2016" }
+    "*Windows Server 2019*" { $WindowsVersion = "Windows Server 2019" }
+    "*Windows Server 2022*" { $WindowsVersion = "Windows Server 2022" }
+    Default { $WindowsVersion = "Unknown" }
+}
+
+if ($WindowsVersion -in ("Windows Server 2012", "Windows Server 2016")){
     [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
 }
 
@@ -54,6 +65,6 @@ while ($destinationFolder.Items().Count -lt $zip.Items().Count) {
     Start-Sleep -Milliseconds 500
 }
 
-cd C:\temp\clat-common-configs\tools\powershell
+cd C:\temp\clat-common-configs-main\tools\powershell
 
 . .\Configure-AnsibleClient.ps1 -Verbose
